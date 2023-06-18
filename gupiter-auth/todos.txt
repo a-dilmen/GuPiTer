@@ -1,0 +1,17 @@
+** implement 3rd party (3PP) sign in-up configurations later
+
+** async userid create configuration logic at register and 3PP
+
+** update cross origin to api gateway after api gateway implementation
+
+** create Exception.md for custom exceptions
+
+** complete unit and integration test
+
+** no need to mapstruct builder pattern satisfactory
+
+** create state enum
+
+** encrypt password before save
+
+** default valuefor crossorigin auth controller rest end points
