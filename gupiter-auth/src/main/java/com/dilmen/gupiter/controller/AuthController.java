@@ -16,15 +16,13 @@ import static com.dilmen.gupiter.constants.RestEndPoints.*;
 public class AuthController {
     private final AuthService authService;
     @PostMapping(REGISTER)
-    @CrossOrigin("*")
+    @CrossOrigin(CROSS_ORIGIN)
     public ResponseEntity<RegisterResponseDto> register(@Validated @RequestBody RegisterRequestDto registerRequestDto){
-        System.out.println(CROSS_ORIGIN);
         return ResponseEntity.ok(authService.register(registerRequestDto));
     }
     @PostMapping(LOGIN)
     @CrossOrigin(CROSS_ORIGIN)
     public ResponseEntity<LoginResponseDto> login(@Validated @RequestBody LoginRequestDto loginRequestDto){
-        System.out.println(CROSS_ORIGIN);
         return ResponseEntity.ok(authService.login(loginRequestDto));
     }
 

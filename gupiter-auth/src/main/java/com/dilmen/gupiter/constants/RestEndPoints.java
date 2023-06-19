@@ -12,6 +12,5 @@ public class RestEndPoints {
 	public static final String REGISTER = "/register";
 	public static final String LOGIN = "/login";
 	@Value("${apigateway.url:*}")
-	@Builder.Default
 	public static final String CROSS_ORIGIN = "*";
 }
