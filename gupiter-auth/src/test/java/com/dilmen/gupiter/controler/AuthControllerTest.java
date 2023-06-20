@@ -15,10 +15,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -30,6 +31,45 @@ class AuthControllerTest {
 	private MockMvc mockMvc;
 	@MockBean
 	private AuthService authService;
+	@Test
+	void register_ValidRequest_ReturnsRegisterResponseDto() throws Exception {
+		RegisterRequestDto requestDto = new RegisterRequestDto();
+		requestDto.setEmail("test@example.com");
+		requestDto.setPassword("Aa123123.");
+		requestDto.setRePassword("Aa123123.");
+		RegisterResponseDto responseDto = RegisterResponseDto.builder()
+				.email(requestDto.getEmail())
+				.build();
+		when(authService.register(any(RegisterRequestDto.class))).thenReturn(responseDto);
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(asJsonString(requestDto)))
+				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.jsonPath("$.email").value("test@example.com"));
+		verify(authService).register(any(RegisterRequestDto.class));
+	}
+	@Test
+	void register_InValidPasswordRequest_ReturnsBadRequest() throws Exception {
+		RegisterRequestDto requestDto = new RegisterRequestDto();
+		requestDto.setEmail("test@example.com");
+		requestDto.setPassword("invalidPassword");
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(asJsonString(requestDto)))
+				.andExpect(MockMvcResultMatchers.status().isBadRequest());
+		verify(authService,never()).register(any(RegisterRequestDto.class));
+	}
+	@Test
+	void register_InValidEmailRequest_ReturnsBadRequest() throws Exception {
+		RegisterRequestDto requestDto = new RegisterRequestDto();
+		requestDto.setEmail("invalid-email-example");
+		requestDto.setPassword("invalidPassword");
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
+						.contentType(MediaType.APPLICATION_JSON)
+						.content(asJsonString(requestDto)))
+				.andExpect(MockMvcResultMatchers.status().isBadRequest());
+		verify(authService,never()).register(any(RegisterRequestDto.class));
+	}
 	@Test
 	void login_ValidRequest_ReturnsLoginResponseDto() throws Exception {
 		LoginRequestDto requestDto = new LoginRequestDto();
